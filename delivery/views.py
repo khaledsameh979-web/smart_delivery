@@ -121,7 +121,7 @@ def make_reply(message, user):
                 return f'شحنتك ({word[:8]}) حالتها الآن: {delivery.get_status_display()} — الميعاد: {delivery.scheduled_date:%Y-%m-%d %H:%M}'
             return 'الرقم ده مش موجود أو مش تابع لحسابك.'
     if 'شحن' in message or 'طلب' in message:
-        return 'تقدر تطلب شحنة جديدة من صفحة "اطلب شحنة" في القايمة فوق 🚚'
+        return 'أقدر أطلبها لك من هنا على طول 🚚 — بس قولي: **منين؟** و**لفين؟** و**إمتى؟** (ونوع المركبة لو عندك تفضيل)'
     if 'سعر' in message or 'تكلفة' in message:
         return 'التسعير حسب نوع المركبة: موتوسيكل للخفيف، مركبة للمتوسط، ومركبة كبيرة للحجم الكبير.'
     if 'سلام' in message or 'أهلا' in message or 'اهلا' in message:
