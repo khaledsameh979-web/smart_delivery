@@ -52,16 +52,16 @@
 
     {% if request.user.is_authenticated %}
     <!-- Chat bubble widget -->
-    <div id="chat-bubble" onclick="toggleChat()">💬</div>
-    <div id="chat-window" class="hidden" style="display:none">
+    <div id="chat-bubble">💬</div>
+    <div id="chat-window">
         <div id="chat-header">
             <span>مساعد التوصيل الذكي 🤖</span>
-            <button id="chat-close" onclick="toggleChat()">✕</button>
+            <button id="chat-close" type="button">✕</button>
         </div>
         <div id="chat-messages"></div>
         <div id="chat-input-row">
-            <input id="chat-input" type="text" placeholder="اكتب رسالتك... أو ابعت رقم شحنة">
-            <button onclick="sendMessage()">إرسال</button>
+            <input id="chat-input" type="text" placeholder="اكتب رسالتك... أو ابعت رقم شحنة" autocomplete="off">
+            <button id="chat-send" type="button">إرسال</button>
         </div>
     </div>
     {% endif %}

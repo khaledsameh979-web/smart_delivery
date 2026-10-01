@@ -1,6 +1,6 @@
 {% extends "delivery/base.html" %}
 
-{% block name %}المساعد الذكي — توصيل ذكي{% endblock %}
+{% block title %}المساعد الذكي — توصيل ذكي{% endblock %}
 
 {% block content %}
 <div class="chat-container">
@@ -11,32 +11,80 @@
             <p>اسأل عن أي شحنة — ابعت رقمها كامل وأنا أقولك حالتها فوراً</p>
         </div>
 
-        <!-- منطقة الرسائل -->
-        <div id="chat-messages" class="chat-messages-body">
+        <!-- منطقة الرسائل (IDs مميزة عشان متتخانقش مع الفقاعة العائمة) -->
+        <div id="page-messages" class="chat-messages-body">
             {% for m in history %}
-                {% if m.sender == 'user' or m.role == 'user' %}
-                    <!-- رسالة المستخدم (على اليمين) -->
-                    <div class="chat-bubble message-user">
-                        {{ m.content }}
-                    </div>
+                {% if m.role == 'user' %}
+                    <div class="chat-bubble message-user">{{ m.content }}</div>
                 {% else %}
-                    <!-- رسالة البوت (على اليسار) -->
-                    <div class="chat-bubble message-bot">
-                        {{ m.content }}
-                    </div>
+                    <div class="chat-bubble message-bot">{{ m.content }}</div>
                 {% endif %}
             {% empty %}
                 <div class="chat-bubble message-bot">
-                    أهلاً بك! أنا المساعد الذكي لتوصيل ذكي 🤖 ابعت رقم شحنة كامل (زي 29ea6f72...) وأنا أقولك حالتها.
+                    أهلاً بك! أنا المساعد الذكي لتوصيل ذكي 🤖 — اطلب شحنة بكلام عادي أو ابعت رقم شحنة كامل وأنا أقولك حالتها.
                 </div>
             {% endfor %}
         </div>
 
         <!-- منطقة إدخال النص -->
         <div class="chat-input-row">
-            <input id="chat-input" type="text" placeholder="اكتب رسالتك..." onkeypress="handleKeyPress(event)">
-            <button onclick="sendMessage()" class="btn btn-yellow">إرسال</button>
+            <input id="page-input" type="text" placeholder="اكتب رسالتك..." autocomplete="off">
+            <button id="page-send" class="btn btn-yellow" type="button">إرسال</button>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('page-input');
+  const sendBtn = document.getElementById('page-send');
+  const box = document.getElementById('page-messages');
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  function append(text, type) {
+    const d = document.createElement('div');
+    d.className = `chat-bubble message-${type}`;
+    d.textContent = text;
+    box.appendChild(d);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  async function send() {
+    const val = input.value.trim();
+    if (!val || input.disabled) return;
+    append(val, 'user');
+    input.value = '';
+    input.disabled = true;
+    sendBtn.disabled = true;
+    try {
+      const res = await fetch('/api/chat/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: `message=${encodeURIComponent(val)}`,
+      });
+      const data = await res.json();
+      append(data.reply || 'حصلت مشكلة في الرد، جرّب تاني.', res.ok ? 'bot' : 'bot');
+    } catch {
+      append('مفيش اتصال بالسيرفر — اتأكد إنه شغال.', 'bot');
+    } finally {
+      input.disabled = false;
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', send);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') send(); });
+});
+</script>
 {% endblock %}
