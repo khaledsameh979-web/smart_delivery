@@ -427,3 +427,6 @@ form p textarea:focus {
     font-weight: bold;
     cursor: pointer;
 }
+/* رسايل أخطاء النماذج — عشان تبقى ظاهرة على الخلفية الغامقة */
+.errorlist{list-style:none;padding:0;margin:.35rem 0 0;color:#f87171;font-size:.85rem;font-weight:600}
+.errorlist li{margin:.15rem 0}
