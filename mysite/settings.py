@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'smart_delivery_db', 
         'USER': 'postgres',          
-        'PASSWORD': '123000', 
+        'PASSWORD': 'put_your_db_password_here', 
         'HOST': '127.0.0.1',  
         'PORT': '5432',
     }
